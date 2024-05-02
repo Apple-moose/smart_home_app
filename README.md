@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+1- First, create app:
+$ npx create-react-app ---(name app)----
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Steps to setup redux...
 
-## Available Scripts
+2- in terminal:
+npm install @reduxjs/toolkit react-redux
+(maybe axios too? -> npm i axios )
+(axios moment ? -> npm install axios moment)
+(React router-dom ? -> npm install react-router-dom)
 
-In the project directory, you can run:
+3- Create: src/store/index.js
+import { configureStore } from "@reduxjs/toolkit";
+import somethingReducer from "./some/slice";
 
-### `npm start`
+const store = configureStore({
+reducer: {
+something: somethingReducer,
+},
+});
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+export default store;
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+4- Create 'slices': src/store/something/slice.js
+import { createSlice } from "@reduxjs/toolkit";
 
-### `npm test`
+const initialState = { someProperty: "some initial value", };
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+export const somethingSlice = createSlice({ name: "something", initialState, reducers: {}, });
 
-### `npm run build`
+export const {
+//put reducers here//
+} = somethingSlice.actions; export default somethingSlice.reducer;
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5- in src/index.js
+import { Provider } from "react-redux";
+import store from "./store";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+// <React.StrictMode>
+<Provider store={store}>
+<App />
+</Provider>
+// </React.StrictMode>
+);
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+6- in src/components/any/component.js
+import { useDispatch } from "react-redux"; import { doSomething } from "../../store/something/slice";
 
-### `npm run eject`
+function MyComponent() { const dispatch = useDispatch(); dispatch(doSomething("My payload")); }
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+7- Setup of src/store/<something>/selectors.js
+export const selectSomething = (reduxState) => reduxState.something.what;
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+8- If needed install react-router-dom:
+npm install react-router-dom
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Inject the router into the app by wrapping the App component in a Router
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+// src/index.js
+import { BrowserRouter as Router } from "react-router-dom";
 
-## Learn More
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+// <React.StrictMode>
+<Provider store={store}>
+<Router>
+<App />
+</Router>
+</Provider>
+// </React.StrictMode>
+);
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+9- Setting up a HOMEPAGE:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#Create src/pages/HomePage.js:
+import React from "react";
 
-### Code Splitting
+export default function HomePage() {
+return <h1>HomePage!</h1>;
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#Modify src/App.js:
+import React from "react";
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
 
-### Analyzing the Bundle Size
+export default function App() {
+return (
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<div>
+<Routes>
+{/_ more pages to be added here later _/}
+<Route path="/" element={<HomePage />} />
+</Routes>
+</div>
+);
+}
