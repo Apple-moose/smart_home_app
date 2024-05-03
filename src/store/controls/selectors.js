@@ -1,1 +1,1 @@
-export const selectControls = (reduxState) => reduxState.something.what;
+export const selectControls = (reduxState) => reduxState.controls;
